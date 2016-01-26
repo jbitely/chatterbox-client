@@ -55,6 +55,14 @@ $(document).ready(function(){
       }
     });
   })
+  $('.rooms').change(function(){
+    var selected = $('.rooms option:selected').val();
+    if(selected === 'newRoom'){
+      var newRoom = prompt('Enter a new room name');
+      $('.rooms').append("<option val=" + newRoom + ">" + newRoom + "</option>");
+      $('.rooms').val(newRoom);
+    }
+  })
 });
 
 
