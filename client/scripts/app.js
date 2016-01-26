@@ -33,13 +33,14 @@ $(document).ready(function(){
 
   app.addMessage = function(message){
     $('#chats').append("<div><span class='message'>"+_.escape(message.text)+
-      "</span> - <span class='username'>" + _.escape(message.username) + "</span></div>");
+      "</span> - <span class='username'>" + _.escape(message.username) + "</span>"
+      + "<span>"+  message.createdAt + "</span>" + "</div>");
   }
   app.fetch = function(){
     $.ajax({
       url: app.server,
       type: 'GET',
-      data: {limit: mainSettings.limit, where: mainSettings.createdAfter},
+      data: {order:'-createdAt',where: mainSettings.createdAfter},
       success: function(response){
         for (var i = 0; i < response.results.length; i++) {
           if(!(response.results[i] in messageCache)){
