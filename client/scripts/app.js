@@ -6,14 +6,17 @@ var mainSettings = {
 
 }
 
-var messageCache = [];
+var messageCache = {};
+
 var getMessages = $.ajax({
     url: mainSettings.endpoint,
     type: 'GET',
     data: {limit: mainSettings.limit, where: mainSettings.createdAfter},
     success: function(response){
       for (var i = 0; i < response.results.length; i++) {
-        messageCache.push(response.results[i]);
+        if(!(response.results[i] in messageCache)){
+          messageCache[response.results[i].objectId] = response.results[i];
+        }
       };
     },
     error: function(){
@@ -22,7 +25,7 @@ var getMessages = $.ajax({
   });
 
 getMessages.done(function(){
-  for(var i = 0; i< mainSettings.limit; i++){
-    $('.content').append("<div>"+messageCache[i].text+"</div>");
-  }
+  _.each(messageCache, function(message){
+    $('.content').append("<div>"+message.text+"</div>");
+  });
 });
