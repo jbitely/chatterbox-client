@@ -30,9 +30,10 @@ $(document).ready(function(){
       }
     });
   };
+
   app.addMessage = function(message){
-    $('#chats').append("<div><span class='message'>"+message.text+
-      "</span> - <span class='username'>" + message.username + "</span></div>");
+    $('#chats').append("<div><span class='message'>"+_.escape(message.text)+
+      "</span> - <span class='username'>" + _.escape(message.username) + "</span></div>");
   }
   app.fetch = function(){
     $.ajax({
