@@ -1,13 +1,14 @@
 var app = {};
+app.server = 'https://api.parse.com/1/classes/chatterbox';
 
 $(document).ready(function(){
 
   var mainSettings = {
     limit: 50,
     createdAfter: JSON.stringify({createdAt:{"$gte":{"__type":"Date","iso":"2016-01-24T00:00:00"}}}),
-    endpoint:'https://api.parse.com/1/classes/chatterbox',
     room: 'default'
-  }
+  };
+
   var messageCache = {};
   var user = window.location.search.slice(10);
 
@@ -15,7 +16,7 @@ $(document).ready(function(){
   app.send = function(message){
     $.ajax({
       // This is the url you should use to communicate with the parse API server.
-      url: mainSettings.endpoint,
+      url: app.server,
       type: 'POST',
       data: JSON.stringify(message),
       contentType: 'application/json',
@@ -29,8 +30,9 @@ $(document).ready(function(){
     });
   };
 
-  var getMessages = $.ajax({
-      url: mainSettings.endpoint,
+  app.fetch = function(){
+    $.ajax({
+      url: app.server,
       type: 'GET',
       data: {limit: mainSettings.limit, where: mainSettings.createdAfter},
       success: function(response){
@@ -43,13 +45,14 @@ $(document).ready(function(){
       error: function(){
         console.log('There was an error');
       }
-    });
+    })
+  }
 
-  getMessages.done(function(){
-    _.each(messageCache, function(message){
-      $('.content').append("<div>"+message.text+"</div>");
-    });
-  });
+  // app.fetch.done(function(){
+  //   _.each(messageCache, function(message){
+  //     $('.content').append("<div>"+message.text+"</div>");
+  //   });
+  // });
 
   $('.input button').on('click',function(event){
     event.preventDefault();
