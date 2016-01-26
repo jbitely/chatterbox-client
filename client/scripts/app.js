@@ -29,7 +29,9 @@ $(document).ready(function(){
       }
     });
   };
-
+  app.addMessage = function(message){
+    $('#chats').append("<div>"+message.text+"</div>");
+  }
   app.fetch = function(){
     $.ajax({
       url: app.server,
@@ -40,7 +42,7 @@ $(document).ready(function(){
           if(!(response.results[i] in messageCache)){
             messageCache[response.results[i].objectId] = response.results[i];
           }
-          $('.content').append("<div>"+response.results[i].text+"</div>");
+          app.addMessage(response.results[i]);
         };
       },
       error: function(){
@@ -70,6 +72,8 @@ $(document).ready(function(){
       $('.rooms').append("<option val=" + newRoom + ">" + newRoom + "</option>");
       $('.rooms').val(newRoom);
     }
+  app.clearMessages();
+    //get messages for currently selected room
   })
 });
 
