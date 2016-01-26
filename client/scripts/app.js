@@ -40,6 +40,7 @@ $(document).ready(function(){
           if(!(response.results[i] in messageCache)){
             messageCache[response.results[i].objectId] = response.results[i];
           }
+          $('.content').append("<div>"+response.results[i].text+"</div>");
         };
       },
       error: function(){
@@ -47,12 +48,6 @@ $(document).ready(function(){
       }
     })
   }
-
-  // app.fetch.done(function(){
-  //   _.each(messageCache, function(message){
-  //     $('.content').append("<div>"+message.text+"</div>");
-  //   });
-  // });
 
   $('.input button').on('click',function(event){
     event.preventDefault();
@@ -65,7 +60,9 @@ $(document).ready(function(){
     // post message
     app.send(message);
   })
-
+  app.clearMessages = function(){
+    $('#chats').empty();
+  }
   $('.rooms').change(function(){
     var selected = $('.rooms option:selected').val();
     if(selected === 'newRoom'){
