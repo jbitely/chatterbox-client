@@ -65,12 +65,15 @@ $(document).ready(function(){
   app.clearMessages = function(){
     $('#chats').empty();
   }
-  $('.rooms').change(function(){
-    var selected = $('.rooms option:selected').val();
+  app.addRoom = function(roomName){
+    $('#roomSelect').append("<option val=" + roomName + ">" + roomName + "</option>");
+  }
+  $('#roomSelect').change(function(){
+    var selected = $('#roomSelect option:selected').val();
     if(selected === 'newRoom'){
       var newRoom = prompt('Enter a new room name');
-      $('.rooms').append("<option val=" + newRoom + ">" + newRoom + "</option>");
-      $('.rooms').val(newRoom);
+      app.addRoom(newRoom);
+      $('#roomSelect').val(newRoom);
     }
   app.clearMessages();
     //get messages for currently selected room
