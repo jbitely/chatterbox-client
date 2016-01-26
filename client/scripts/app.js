@@ -36,13 +36,22 @@ $(document).ready(function(){
       "</span> - <span class='username'>" + _.escape(message.username) + "</span>"
       + "<span>"+  message.createdAt + "</span>" + "</div>");
   }
-  app.fetch = function(){
+app.fetch = function(){
     $.ajax({
       url: app.server,
       type: 'GET',
       data: {order:'-createdAt',where: mainSettings.createdAfter},
       success: function(response){
         for (var i = 0; i < response.results.length; i++) {
+          var found = false;
+          $('option').each(function(item){
+            if($(this).val()===response.results[i].roomname){
+              found = true;
+            }
+          })
+          if(!found){
+            app.addRoom(response.results[i].roomname)
+          }
           if(!(response.results[i] in messageCache)){
             messageCache[response.results[i].objectId] = response.results[i];
           }
@@ -72,16 +81,19 @@ $(document).ready(function(){
     $('#chats').empty();
   }
   app.addRoom = function(roomName){
-    $('#roomSelect').append("<option val=" + roomName + ">" + roomName + "</option>");
+    if(roomName){
+      roomName = _.escape(roomName);
+      $('#roomSelect').append("<option val=" + roomName + ">" + roomName + "</option>");
+    }
   }
   $('#roomSelect').change(function(){
-    var selected = $('#roomSelect option:selected').val();
+    var selected = $('#roomSelect').val();
     if(selected === 'newRoom'){
       var newRoom = prompt('Enter a new room name');
       app.addRoom(newRoom);
       $('#roomSelect').val(newRoom);
     }
-    // app.clearMessages();
+    app.clearMessages();
     //get messages for currently selected room
   })
 
