@@ -50,17 +50,20 @@ $(document).ready(function(){
       }
     })
   }
-
-  $('.input button').on('click',function(event){
-    event.preventDefault();
+  app.handleSubmit = function(){
+    console.log('hi');
     //create message
     var message = {
-      roomname: 'default',
+      roomname: $('#roomSelect').val(),
       username: 'default',
-      text: $('.input textarea').val()
+      text: $('#message').val()
     }
     // post message
     app.send(message);
+  }
+  $('#send .submit').on('submit',function(event){
+    event.preventDefault();
+    app.handleSubmit();
   })
   app.clearMessages = function(){
     $('#chats').empty();
