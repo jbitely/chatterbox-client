@@ -1,19 +1,14 @@
 var app = {};
-app.server = 'https://api.parse.com/1/classes/chatterbox';
-app.friends = {};
+
 
 $(document).ready(function(){
-
-  var mainSettings = {
-    limit: 50,
-    createdAfter: JSON.stringify({createdAt:{"$gte":{"__type":"Date","iso":"2016-01-24T00:00:00"}}}),
-    room: 'default'
-  };
-
-  var messageCache = {};
-  var user = window.location.search.slice(10);
+  app.server = 'https://api.parse.com/1/classes/chatterbox';
+  app.friends = {};
+  app.user = window.location.search.substr(10);
+  app.limit = 50;
 
   app.init = function(){
+    app.fetch();
     setInterval(app.fetch, 3000);
   };
 
@@ -35,18 +30,24 @@ $(document).ready(function(){
   };
 
   app.addMessage = function(message){
-    $('#chats').append("<div><span class='message'>"+_.escape(message.text)+
-      "</span> - <span class='username'>" + _.escape(message.username) + "</span>"
-      + "<span>"+  message.createdAt + "</span>" + "</div>");
+    var $messageDiv = $('<div class="chat" />');
+    var $message = $('<span class="message" />');
+    var $username = $('<span class="username" />');
+    $message.text(_.escape(message.text)).appendTo($messageDiv);
+    $username.text(_.escape(message.username)).appendTo($messageDiv);
+    if(message.username in app.friends){
+      $messageDiv.addClass('friend');
+    }
+    $('#chats').append($messageDiv);
   }
 
   app.fetch = function(){
-    console.log("fetch ran");
     $.ajax({
       url: app.server,
       type: 'GET',
-      data: {order:'-createdAt',where: mainSettings.createdAfter},
+      data: {order:'-createdAt'},
       success: function(response){
+        app.clearMessages();
         for (var i = 0; i < response.results.length; i++) {
           var found = false;
           $('option').each(function(item){
@@ -56,9 +57,6 @@ $(document).ready(function(){
           })
           if(!found){
             app.addRoom(response.results[i].roomname)
-          }
-          if(!(response.results[i] in messageCache)){
-            messageCache[response.results[i].objectId] = response.results[i];
           }
           if(response.results[i].roomname === $('#roomSelect').val()){
             app.addMessage(response.results[i]);
@@ -75,14 +73,16 @@ $(document).ready(function(){
     //create message
     var message = {
       roomname: $('#roomSelect').val(),
-      username: 'default',
+      username: app.user,
       text: $('#message').val()
     }
-    // post message
     app.send(message);
+    $('#message').val('');
+    app.fetch();
   }
 
-  $('#send .submit').on('submit',function(event){
+  $('#send').on('submit',function(event){
+    console.log('click');
     event.preventDefault();
     app.handleSubmit();
   })
