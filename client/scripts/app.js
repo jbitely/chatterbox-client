@@ -36,7 +36,8 @@ $(document).ready(function(){
       "</span> - <span class='username'>" + _.escape(message.username) + "</span>"
       + "<span>"+  message.createdAt + "</span>" + "</div>");
   }
-app.fetch = function(){
+
+  app.fetch = function(){
     $.ajax({
       url: app.server,
       type: 'GET',
@@ -55,7 +56,9 @@ app.fetch = function(){
           if(!(response.results[i] in messageCache)){
             messageCache[response.results[i].objectId] = response.results[i];
           }
-          app.addMessage(response.results[i]);
+          if(response.results[i].roomname === $('#roomSelect').val()){
+            app.addMessage(response.results[i]);
+          }
         };
       },
       error: function(){
@@ -63,6 +66,7 @@ app.fetch = function(){
       }
     })
   }
+
   app.handleSubmit = function(){
     //create message
     var message = {
@@ -73,19 +77,23 @@ app.fetch = function(){
     // post message
     app.send(message);
   }
+
   $('#send .submit').on('submit',function(event){
     event.preventDefault();
     app.handleSubmit();
   })
+
   app.clearMessages = function(){
     $('#chats').empty();
   }
+
   app.addRoom = function(roomName){
     if(roomName){
       roomName = _.escape(roomName);
       $('#roomSelect').append("<option val=" + roomName + ">" + roomName + "</option>");
     }
   }
+
   $('#roomSelect').change(function(){
     var selected = $('#roomSelect').val();
     if(selected === 'newRoom'){
@@ -94,7 +102,7 @@ app.fetch = function(){
       $('#roomSelect').val(newRoom);
     }
     app.clearMessages();
-    //get messages for currently selected room
+    app.fetch();
   })
 
   app.addFriend = function(username){
@@ -102,6 +110,7 @@ app.fetch = function(){
       app.friends[username] = true;
     }
   }
+
   $('#main').on('click', '.username',function(){
     app.addFriend($(this).val());
   });
