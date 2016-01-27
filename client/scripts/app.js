@@ -13,7 +13,10 @@ $(document).ready(function(){
   var messageCache = {};
   var user = window.location.search.slice(10);
 
-  app.init = function(){return};
+  app.init = function(){
+    setInterval(app.fetch, 3000);
+  };
+
   app.send = function(message){
     $.ajax({
       // This is the url you should use to communicate with the parse API server.
@@ -38,6 +41,7 @@ $(document).ready(function(){
   }
 
   app.fetch = function(){
+    console.log("fetch ran");
     $.ajax({
       url: app.server,
       type: 'GET',
@@ -114,6 +118,7 @@ $(document).ready(function(){
   $('#main').on('click', '.username',function(){
     app.addFriend($(this).val());
   });
-  app.fetch();
+
+  app.init();
 });
 
