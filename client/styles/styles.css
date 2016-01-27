@@ -58,7 +58,6 @@ form input[type=text] {
     font-size: 12px;
     padding: 5px;
 }
-
 .chat {
     padding: 5px;
     margin-bottom: 5px;
@@ -73,7 +72,7 @@ form input[type=text] {
     background-color: #ddd;
 }
 .friend{
-    color: blue;
+    font-weight: bold;
 }
 
 .spinner {

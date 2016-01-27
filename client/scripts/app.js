@@ -2,6 +2,7 @@ var app = {};
 
 
 $(document).ready(function(){
+
   app.server = 'https://api.parse.com/1/classes/chatterbox';
   app.friends = {};
   app.user = window.location.search.substr(10);
@@ -34,10 +35,12 @@ $(document).ready(function(){
     var $message = $('<span class="message" />');
     var $username = $('<span class="username" />');
     $message.text(_.escape(message.text)).appendTo($messageDiv);
-    $username.text(_.escape(message.username)).appendTo($messageDiv);
+    $username.html(_.escape(message.username )+'<br />').attr('data-username', _.escape(message.username))
+             .appendTo($messageDiv);
     if(message.username in app.friends){
       $messageDiv.addClass('friend');
     }
+    $message.text(_.escape(message.text)).appendTo($messageDiv);
     $('#chats').append($messageDiv);
   }
 
@@ -110,13 +113,14 @@ $(document).ready(function(){
   })
 
   app.addFriend = function(username){
-    if(!username in app.friends){
+    if(!app.friends.hasOwnProperty(username)){
       app.friends[username] = true;
+      app.fetch();
     }
   }
 
   $('#main').on('click', '.username',function(){
-    app.addFriend($(this).val());
+    app.addFriend($(this).data('username'));
   });
 
   app.init();
